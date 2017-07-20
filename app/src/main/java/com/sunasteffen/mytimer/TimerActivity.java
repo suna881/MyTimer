@@ -38,6 +38,7 @@ public class TimerActivity extends AppCompatActivity {
 
         final long duration = getIntent().getLongExtra(TIME_IN_MILLIS_KEY, 0L);
 
+        alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (duration != 0L && getIntent().getBooleanExtra(START_TIMER_KEY, true)) {
             startTimer(duration);
         } else {
@@ -61,7 +62,9 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void deleteTimer() {
-        alarmMgr.cancel(alarmIntent);
+        if (alarmIntent != null) {
+            alarmMgr.cancel(alarmIntent);
+        }
         finish();
         startActivity(new Intent(TimerActivity.this, MainActivity.class));
     }
@@ -79,7 +82,6 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void startTimer(long duration) {
-        alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, TimerAlarmReceiver.class);
         intent.putExtra(TIME_IN_MILLIS_KEY, duration);
         alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
